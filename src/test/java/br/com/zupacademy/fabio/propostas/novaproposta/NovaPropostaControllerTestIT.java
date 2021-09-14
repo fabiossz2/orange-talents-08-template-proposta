@@ -81,6 +81,36 @@ class NovaPropostaControllerTestIT {
                 .andExpect(status().isUnprocessableEntity());
     }
 
+    @Test
+    void deveSalvarUmaPropostaElegivel() throws Exception {
+        NovaPropostaPostRequest propostaElegivel = new NovaPropostaPostRequest("08774628364",
+                "teste@email.com.br", "teste", "Rua José Júlio Burgain 700", new BigDecimal("100.00"));
+
+        String propostaJson = new Gson().toJson(propostaElegivel);
+        mockMvc.perform(post("/propostas")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType("application/json")
+                        .content(propostaJson))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.statusProposta").value("ELEGIVEL"));
+    }
+
+    @Test
+    void deveSalvarUmaPropostaNaoElegivel() throws Exception {
+        NovaPropostaPostRequest propostaElegivel = new NovaPropostaPostRequest("39743645365",
+                "teste@email.com.br", "teste", "Avenida Sérgio Gama 105", new BigDecimal("200.00"));
+
+        String propostaJson = new Gson().toJson(propostaElegivel);
+        mockMvc.perform(post("/propostas")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType("application/json")
+                        .content(propostaJson))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.statusProposta").value("NAO_ELEGIVEL"));
+    }
+
     private static Stream<Arguments> generationProposta() {
         return Stream.of(
                 Arguments.of(new NovaPropostaPostRequest("111", "", "", "",

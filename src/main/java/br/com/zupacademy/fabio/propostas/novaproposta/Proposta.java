@@ -8,6 +8,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 @Entity
 public class Proposta {
@@ -32,6 +34,8 @@ public class Proposta {
     @Positive
     @NotNull
     private BigDecimal salario;
+    @Enumerated(EnumType.STRING)
+    private PropostaStatus status;
 
     @Deprecated
     protected Proposta() {
@@ -68,5 +72,21 @@ public class Proposta {
 
     public BigDecimal getSalario() {
         return salario;
+    }
+
+    public PropostaStatus getStatus() {
+        return status;
+    }
+
+    public Map<String, String> criaSolicitacaoAnalise() {
+        Map<String, String> map = new HashMap<>();
+        map.put("idProposta", this.id.toString());
+        map.put("nome", this.nome);
+        map.put("documento", this.documento);
+        return map;
+    }
+
+    public void setStatus(PropostaStatus status) {
+        this.status = status;
     }
 }

@@ -9,6 +9,8 @@ public class NovaPropostaDto {
     private String nome;
     private String endereco;
     private BigDecimal salario;
+    private String statusProposta;
+
 
     public NovaPropostaDto(Proposta proposta) {
         this.id = proposta.getId();
@@ -17,6 +19,7 @@ public class NovaPropostaDto {
         this.nome = proposta.getNome();
         this.endereco = proposta.getEndereco();
         this.salario = proposta.getSalario();
+        this.statusProposta = proposta.getStatus().toString();
     }
 
     public Long getId() {
@@ -41,5 +44,9 @@ public class NovaPropostaDto {
 
     public BigDecimal getSalario() {
         return salario;
+    }
+
+    public String getStatusProposta() {
+        return statusProposta;
     }
 }
