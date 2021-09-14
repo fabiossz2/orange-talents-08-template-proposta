@@ -1,5 +1,6 @@
 package br.com.zupacademy.fabio.propostas.novaproposta;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,6 +11,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.Optional;
 
 @RestController
 public class NovaPropostaController {
@@ -23,8 +25,12 @@ public class NovaPropostaController {
     @PostMapping
     @RequestMapping("/propostas")
     @Transactional
-    public ResponseEntity<NovaPropostaDto> cria(@RequestBody @Valid NovaPropostaPostRequest request,
+    public ResponseEntity<?> cria(@RequestBody @Valid NovaPropostaPostRequest request,
                                                 UriComponentsBuilder builder) {
+        Optional<Proposta> propostaOptional = propostaRepository.findByDocumento(request.getDocumento());
+        if(propostaOptional.isPresent()){
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("solicitante já requisitou uma proposta");
+        }
         Proposta proposta = request.toModel();
         this.propostaRepository.save(proposta);
         URI uri = builder.path("/propostas/{id}").buildAndExpand(proposta.getId()).toUri();

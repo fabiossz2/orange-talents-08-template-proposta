@@ -58,6 +58,29 @@ class NovaPropostaControllerTestIT {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    void naoDeveSalvarUmaPropostaJáExistente() throws Exception {
+
+        NovaPropostaPostRequest request = new NovaPropostaPostRequest("86881646810", "teste@zup.com.br",
+                "Beltrano", "Rua Ermelinda 1000", new BigDecimal("3000.00"));
+
+        String requestJson = gson.toJson(request);
+
+        mockMvc.perform(post("/propostas")
+                        .content(requestJson)
+                        .contentType("application/json")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(post("/propostas")
+                        .content(requestJson)
+                        .contentType("application/json")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+    }
+
     private static Stream<Arguments> generationProposta() {
         return Stream.of(
                 Arguments.of(new NovaPropostaPostRequest("111", "", "", "",

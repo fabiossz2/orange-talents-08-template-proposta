@@ -2,10 +2,7 @@ package br.com.zupacademy.fabio.propostas.novaproposta;
 
 import br.com.zupacademy.fabio.propostas.validators.CpfOrCnpjValidator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -20,13 +17,17 @@ public class Proposta {
     private Long id;
     @CpfOrCnpjValidator
     @NotBlank
+    @Column(unique = true, nullable = false)
     private String documento;
     @Email
     @NotBlank
+    @Column(nullable = false)
     private String email;
     @NotBlank
+    @Column(nullable = false)
     private String nome;
     @NotBlank
+    @Column(nullable = false)
     private String endereco;
     @Positive
     @NotNull

@@ -36,4 +36,8 @@ public class NovaPropostaPostRequest {
     public Proposta toModel() {
         return new Proposta(documento, email, nome, endereco, salario);
     }
+
+    public String getDocumento() {
+        return documento;
+    }
 }
