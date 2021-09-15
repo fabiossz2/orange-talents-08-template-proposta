@@ -5,6 +5,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import javax.validation.constraints.NotBlank;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -15,4 +16,6 @@ public interface PropostaRepository extends CrudRepository<Proposta, Long> {
 
     @Query("SELECT prop FROM Cartao card RIGHT JOIN card.proposta prop WHERE prop.status = :status AND card IS NULL")
     Collection<Proposta> findPropostaByStatus(@Param("status") PropostaStatus status);
+
+    Optional<Proposta> findById(@NotBlank String id);
 }
