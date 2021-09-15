@@ -2,6 +2,8 @@ package br.com.zupacademy.fabio.propostas.novaproposta;
 
 import br.com.zupacademy.fabio.propostas.externo.ApiAnaliseFinanceira;
 import feign.FeignException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +21,8 @@ import java.util.Optional;
 
 @RestController
 public class NovaPropostaController {
+
+    private final Logger logger = LoggerFactory.getLogger(NovaPropostaController.class);
 
     private PropostaRepository propostaRepository;
     private ApiAnaliseFinanceira apiAnaliseFinanceira;
@@ -46,7 +50,10 @@ public class NovaPropostaController {
         try {
             apiAnaliseFinanceira.analiseDadosFinanceiros(mapaDadosSolicitante);
             proposta.setStatus(PropostaStatus.ELEGIVEL);
+            logger.info(String.format("Proposta - documento: %s email: %s solicitante: %s endereco-solicitante: %s salario: %.2f criada com sucesso",
+                    proposta.getDocumento(), proposta.getEmail(), proposta.getId(), proposta.getEndereco(), proposta.getSalario()));
         } catch (FeignException ex) {
+            logger.warn(ex.toString());
             HttpStatus httpStatus = HttpStatus.resolve(ex.status());
 
             if (Objects.isNull(httpStatus)) httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;

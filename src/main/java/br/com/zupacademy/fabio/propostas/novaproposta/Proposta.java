@@ -1,6 +1,7 @@
 package br.com.zupacademy.fabio.propostas.novaproposta;
 
 import br.com.zupacademy.fabio.propostas.validators.CpfOrCnpjValidator;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -15,8 +16,10 @@ import java.util.Map;
 public class Proposta {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    private String id;
+
     @CpfOrCnpjValidator
     @NotBlank
     @Column(unique = true, nullable = false)
@@ -50,7 +53,7 @@ public class Proposta {
         this.salario = salario;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 

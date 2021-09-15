@@ -3,7 +3,7 @@ package br.com.zupacademy.fabio.propostas.novaproposta;
 import java.math.BigDecimal;
 
 public class NovaPropostaDto {
-    private Long id;
+    private String id;
     private String documento;
     private String email;
     private String nome;
@@ -22,7 +22,7 @@ public class NovaPropostaDto {
         this.statusProposta = proposta.getStatus().toString();
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
