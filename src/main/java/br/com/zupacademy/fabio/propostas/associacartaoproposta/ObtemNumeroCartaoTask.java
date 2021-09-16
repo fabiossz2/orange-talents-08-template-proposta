@@ -36,7 +36,7 @@ public class ObtemNumeroCartaoTask {
 
     @Scheduled(fixedDelayString = "${periodicidade.executa.operacao.obtem.numero.cartao.credito}")
     @Transactional
-    public synchronized void execute() throws JsonProcessingException {
+    public synchronized void execute() {
         String idCartao = null;
         Map<String, String> mapDadosSolicitante;
 
