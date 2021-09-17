@@ -46,4 +46,11 @@ public class CustomExceptionHandler {
         return new StandardError(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(),
                 HttpStatus.BAD_REQUEST.toString(), exception.getClass().toString());
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public StandardError handleIllegalArgumentException(IllegalArgumentException exception) {
+        return new StandardError(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.toString(), exception.getMessage());
+    }
 }
