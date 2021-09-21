@@ -20,14 +20,12 @@ public class Cartao {
 
     @NotBlank
     @Column(nullable = false)
-//    @CreditCardNumber
     private String numero;
 
     @ManyToOne
     @NotNull
     @JoinColumn(nullable = false)
     private Proposta proposta;
-
 
     @OneToMany(cascade = CascadeType.MERGE, mappedBy = "cartao")
     private List<Biometria> biometrias = new ArrayList<>();

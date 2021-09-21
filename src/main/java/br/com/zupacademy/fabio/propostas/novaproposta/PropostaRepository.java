@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 @Repository
-public interface PropostaRepository extends CrudRepository<Proposta, Long> {
+public interface PropostaRepository extends CrudRepository<Proposta, String> {
 
     Optional<Proposta> findByDocumento(String documento);
 

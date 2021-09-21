@@ -24,7 +24,7 @@ public class NovaBiometriaController {
     }
 
     @PostMapping
-    @RequestMapping("/cartoes/{id}/biometria")
+    @RequestMapping("/cartoes/{id}/biometrias")
     @Transactional
     public ResponseEntity<?> cria(@RequestBody NovaBiometriaPostRequest request,
                                   @PathVariable(required = true, value = "id") String idCartao, UriComponentsBuilder builder) {

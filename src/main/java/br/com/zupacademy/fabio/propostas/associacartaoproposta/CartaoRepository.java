@@ -7,7 +7,7 @@ import javax.validation.constraints.NotBlank;
 import java.util.Optional;
 
 @Repository
-public interface CartaoRepository extends CrudRepository<Cartao, Long> {
+public interface CartaoRepository extends CrudRepository<Cartao, String> {
 
     Optional<Cartao> findById(@NotBlank String idCartao);
 }
