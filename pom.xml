@@ -10,7 +10,7 @@
     </parent>
     <groupId>br.com.zupacademy.fabio</groupId>
     <artifactId>propostas</artifactId>
-    <version>11.10.1</version>
+    <version>11.12.1</version>
     <name>propostas</name>
     <description>Desafio Microservice de Propostas</description>
     <properties>
@@ -19,6 +19,17 @@
         <ch.qos.logback.version>1.2.3</ch.qos.logback.version>
     </properties>
     <dependencies>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-oauth2-jose</artifactId>
+        </dependency>
+
 
         <dependency>
             <groupId>net.logstash.logback</groupId>
