@@ -2,6 +2,8 @@ package br.com.zupacademy.fabio.propostas.avisoviagem;
 
 import br.com.zupacademy.fabio.propostas.associacartaoproposta.Cartao;
 import br.com.zupacademy.fabio.propostas.associacartaoproposta.CartaoRepository;
+import br.com.zupacademy.fabio.propostas.externo.ApiCartaoCredito;
+import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -20,10 +22,13 @@ class AvisoViagemController {
 
     private final CartaoRepository cartaoRepository;
     private final AvisoViagemRepository avisoViagemRepository;
+    private final ApiCartaoCredito apiCartaoCredito;
 
-    AvisoViagemController(CartaoRepository cartaoRepository, AvisoViagemRepository avisoViagemRepository) {
+    AvisoViagemController(CartaoRepository cartaoRepository, AvisoViagemRepository avisoViagemRepository,
+                          ApiCartaoCredito apiCartaoCredito) {
         this.cartaoRepository = cartaoRepository;
         this.avisoViagemRepository = avisoViagemRepository;
+        this.apiCartaoCredito = apiCartaoCredito;
     }
 
     @PostMapping
@@ -38,8 +43,14 @@ class AvisoViagemController {
         final Cartao cartao = this.cartaoRepository.findById(idCartao)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cartão não encontrado"));
 
-        final AvisoViagem avisoViagem = new AvisoViagem(ipAddress, userAgent, cartao);
-        this.avisoViagemRepository.save(avisoViagem);
-        return ResponseEntity.ok().build();
+        try {
+            this.apiCartaoCredito.executaAvisoViagem(cartao.getNumero(), request);
+            final AvisoViagem avisoViagem = new AvisoViagem(ipAddress, userAgent, cartao);
+            this.avisoViagemRepository.save(avisoViagem);
+            return ResponseEntity.ok().build();
+        } catch (FeignException ex) {
+            logger.warn(ex.toString());
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Não foi possível adicionar aviso de viagem ao cartão");
+        }
     }
 }

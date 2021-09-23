@@ -18,4 +18,7 @@ public interface ApiCartaoCredito {
 
     @PostMapping("/{id}/bloqueios")
     void executaBloqueioCartao(@PathVariable(name = "id") String numeroCartao, @RequestBody BloqueioCartaoRequest request);
+
+    @PostMapping("/{id}/avisos")
+    void executaAvisoViagem(@PathVariable(name = "id") String numeroCartao, @RequestBody AvisoViagemRequest request);
 }
