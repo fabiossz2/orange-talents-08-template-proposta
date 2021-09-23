@@ -10,7 +10,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.transaction.Transactional;
 import java.net.URI;
-import java.util.Objects;
 
 @RestController
 public class NovaBiometriaController {
@@ -27,7 +26,7 @@ public class NovaBiometriaController {
     @RequestMapping("/cartoes/{id}/biometrias")
     @Transactional
     public ResponseEntity<?> cria(@RequestBody NovaBiometriaPostRequest request,
-                                  @PathVariable(required = true, value = "id") String idCartao, UriComponentsBuilder builder) {
+                                  @PathVariable(value = "id") String idCartao, UriComponentsBuilder builder) {
 
         Cartao cartao = this.cartaoRepository.findById(idCartao)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cartão não encontrado"));

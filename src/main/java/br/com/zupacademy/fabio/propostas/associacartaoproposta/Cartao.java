@@ -43,6 +43,10 @@ public class Cartao {
         return id;
     }
 
+    public String getNumero() {
+        return numero;
+    }
+
     public void adicionaBiometria(Biometria biometria) {
         this.biometrias.add(biometria);
     }
