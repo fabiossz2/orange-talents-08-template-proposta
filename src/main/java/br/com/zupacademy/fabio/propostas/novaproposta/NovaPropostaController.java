@@ -1,6 +1,7 @@
 package br.com.zupacademy.fabio.propostas.novaproposta;
 
 import br.com.zupacademy.fabio.propostas.externo.ApiAnaliseFinanceira;
+import br.com.zupacademy.fabio.propostas.metrics.PropostasMetrics;
 import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,10 +27,13 @@ public class NovaPropostaController {
 
     private PropostaRepository propostaRepository;
     private ApiAnaliseFinanceira apiAnaliseFinanceira;
+    private PropostasMetrics propostasMetrics;
 
-    public NovaPropostaController(PropostaRepository propostaRepository, ApiAnaliseFinanceira apiAnaliseFinanceira) {
+    public NovaPropostaController(PropostaRepository propostaRepository, ApiAnaliseFinanceira apiAnaliseFinanceira,
+                                  PropostasMetrics propostasMetrics) {
         this.propostaRepository = propostaRepository;
         this.apiAnaliseFinanceira = apiAnaliseFinanceira;
+        this.propostasMetrics = propostasMetrics;
     }
 
     @PostMapping
@@ -61,7 +65,7 @@ public class NovaPropostaController {
             if (HttpStatus.UNPROCESSABLE_ENTITY.value() == httpStatus.value())
                 proposta.setStatus(PropostaStatus.NAO_ELEGIVEL);
         }
-
+        this.propostasMetrics.counterPropostasCriadas();
         URI uri = builder.path("/propostas/{id}").buildAndExpand(proposta.getId()).toUri();
         return ResponseEntity.created(uri).body(new NovaPropostaDto(proposta));
     }
