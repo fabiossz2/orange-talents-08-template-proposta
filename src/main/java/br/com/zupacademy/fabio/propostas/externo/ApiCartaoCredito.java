@@ -21,4 +21,7 @@ public interface ApiCartaoCredito {
 
     @PostMapping("/{id}/avisos")
     void executaAvisoViagem(@PathVariable(name = "id") String numeroCartao, @RequestBody AvisoViagemRequest request);
+
+    @PostMapping("/{id}/carteiras")
+    void associaCarteiraDigital(@PathVariable(name = "id") String numeroCartao, @RequestBody CarteiraDigitalRequest request);
 }
