@@ -40,4 +40,8 @@ public class NovaPropostaPostRequest {
     public String getDocumento() {
         return documento;
     }
+
+    public String getEmail() {
+        return email;
+    }
 }

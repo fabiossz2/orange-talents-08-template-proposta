@@ -10,7 +10,7 @@
     </parent>
     <groupId>br.com.zupacademy.fabio</groupId>
     <artifactId>propostas</artifactId>
-    <version>11.12.1</version>
+    <version>11.20.1</version>
     <name>propostas</name>
     <description>Desafio Microservice de Propostas</description>
     <properties>
@@ -19,6 +19,12 @@
         <ch.qos.logback.version>1.2.3</ch.qos.logback.version>
     </properties>
     <dependencies>
+
+        <dependency>
+            <groupId>io.opentracing.contrib</groupId>
+            <artifactId>opentracing-spring-jaeger-web-starter</artifactId>
+            <version>3.2.2</version>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

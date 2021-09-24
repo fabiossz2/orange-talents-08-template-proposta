@@ -3,6 +3,8 @@ package br.com.zupacademy.fabio.propostas.novaproposta;
 import br.com.zupacademy.fabio.propostas.externo.ApiAnaliseFinanceira;
 import br.com.zupacademy.fabio.propostas.metrics.PropostasMetrics;
 import feign.FeignException;
+import io.opentracing.Span;
+import io.opentracing.Tracer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -28,12 +30,14 @@ public class NovaPropostaController {
     private PropostaRepository propostaRepository;
     private ApiAnaliseFinanceira apiAnaliseFinanceira;
     private PropostasMetrics propostasMetrics;
+    private Tracer tracer;
 
     public NovaPropostaController(PropostaRepository propostaRepository, ApiAnaliseFinanceira apiAnaliseFinanceira,
-                                  PropostasMetrics propostasMetrics) {
+                                  PropostasMetrics propostasMetrics, Tracer tracer) {
         this.propostaRepository = propostaRepository;
         this.apiAnaliseFinanceira = apiAnaliseFinanceira;
         this.propostasMetrics = propostasMetrics;
+        this.tracer = tracer;
     }
 
     @PostMapping
@@ -41,6 +45,10 @@ public class NovaPropostaController {
     @Transactional
     public ResponseEntity<?> cria(@RequestBody @Valid NovaPropostaPostRequest request,
                                   UriComponentsBuilder builder) throws FeignException {
+        Span span = tracer.activeSpan();
+        span.setTag("usuario.email", request.getEmail());
+        span.setBaggageItem("user.email", request.getEmail());
+
         Optional<Proposta> propostaOptional = propostaRepository.findByDocumento(request.getDocumento());
         if (propostaOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("solicitante já requisitou uma proposta");
