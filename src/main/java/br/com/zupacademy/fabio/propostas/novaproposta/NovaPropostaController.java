@@ -54,8 +54,8 @@ public class NovaPropostaController {
         try {
             apiAnaliseFinanceira.analiseDadosFinanceiros(mapaDadosSolicitante);
             proposta.setStatus(PropostaStatus.ELEGIVEL);
-            logger.info(String.format("Proposta - documento: %s email: %s solicitante: %s endereco-solicitante: %s salario: %.2f criada com sucesso",
-                    proposta.getDocumento(), proposta.getEmail(), proposta.getId(), proposta.getEndereco(), proposta.getSalario()));
+            logger.info(String.format("Proposta - solicitante: %s endereco-solicitante: %s salario: %.2f criada com sucesso",
+                    proposta.getId(), proposta.getEndereco(), proposta.getSalario()));
         } catch (FeignException ex) {
             logger.warn(ex.toString());
             HttpStatus httpStatus = HttpStatus.resolve(ex.status());

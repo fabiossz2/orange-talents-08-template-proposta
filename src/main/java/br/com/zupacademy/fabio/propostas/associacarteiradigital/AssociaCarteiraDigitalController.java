@@ -15,7 +15,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.Optional;
 
 @RestController
 class AssociaCarteiraDigitalController {
@@ -42,17 +41,16 @@ class AssociaCarteiraDigitalController {
         final Cartao cartao = cartaoRepository.findById(idCartao)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cartão não encontrado"));
 
-        final Optional<Cartao> cartaoOptional = cartaoRepository.findCartaoAndCarteiraDigital(cartao.getId(), request.getCarteira());
-
-        if (cartaoOptional.isPresent()) {
+        if (cartao.temCarteiraDigitalAssociada(request.getCarteira()).size() > 0)
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
                     "Cartão não pode ser associado mais de uma vez a mesma carteira digital");
-        }
+
         try {
             apiCartaoCredito.associaCarteiraDigital(cartao.getNumero(), request);
             final CarteiraDigital carteiraDigital = new CarteiraDigital(request.getEmail(), request.getCarteira(), cartao);
             carteiraDigitalRepository.save(carteiraDigital);
-            final URI uri = builder.path("/cartoes/{id}/carteiras").buildAndExpand(carteiraDigital.getId()).toUri();
+            cartao.adicionaCarteiraDigital(carteiraDigital);
+            final URI uri = builder.path("/cartoes/{id}/carteiras/{id}").buildAndExpand(cartao.getId(), carteiraDigital.getId()).toUri();
             return ResponseEntity.created(uri).build();
         } catch (FeignException ex) {
             logger.warn(ex.toString());

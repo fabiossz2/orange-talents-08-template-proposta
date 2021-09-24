@@ -43,4 +43,8 @@ public class CarteiraDigital {
     public String getId() {
         return id;
     }
+
+    public TipoCarteiraDigital getCarteiraDigital() {
+        return carteiraDigital;
+    }
 }
