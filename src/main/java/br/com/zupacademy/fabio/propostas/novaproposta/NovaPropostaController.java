@@ -1,5 +1,6 @@
 package br.com.zupacademy.fabio.propostas.novaproposta;
 
+import br.com.zupacademy.fabio.propostas.commons.EncryptorsUtil;
 import br.com.zupacademy.fabio.propostas.externo.ApiAnaliseFinanceira;
 import br.com.zupacademy.fabio.propostas.metrics.PropostasMetrics;
 import feign.FeignException;
@@ -49,7 +50,7 @@ public class NovaPropostaController {
         span.setTag("usuario.email", request.getEmail());
         span.setBaggageItem("user.email", request.getEmail());
 
-        Optional<Proposta> propostaOptional = propostaRepository.findByDocumento(request.getDocumento());
+        Optional<Proposta> propostaOptional = propostaRepository.findByDocumento(EncryptorsUtil.encripta(request.getDocumento()));
         if (propostaOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("solicitante já requisitou uma proposta");
         }

@@ -1,6 +1,6 @@
 package br.com.zupacademy.fabio.propostas.novaproposta;
 
-import br.com.zupacademy.fabio.propostas.validators.CpfOrCnpjValidator;
+import br.com.zupacademy.fabio.propostas.commons.EncryptorsUtil;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -20,7 +20,6 @@ public class Proposta {
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
 
-    @CpfOrCnpjValidator
     @NotBlank
     @Column(unique = true, nullable = false)
     private String documento;
@@ -44,9 +43,9 @@ public class Proposta {
     protected Proposta() {
     }
 
-    public Proposta(@CpfOrCnpjValidator @NotBlank String documento, @Email @NotBlank String email, @NotBlank String nome,
+    public Proposta(@NotBlank String documento, @Email @NotBlank String email, @NotBlank String nome,
                     @NotBlank String endereco, @Positive @NotNull BigDecimal salario) {
-        this.documento = documento;
+        this.documento = EncryptorsUtil.encripta(documento);
         this.email = email;
         this.nome = nome;
         this.endereco = endereco;
@@ -58,7 +57,7 @@ public class Proposta {
     }
 
     public String getDocumento() {
-        return documento;
+        return EncryptorsUtil.decripta(documento);
     }
 
     public String getEmail() {
@@ -85,7 +84,7 @@ public class Proposta {
         Map<String, String> map = new HashMap<>();
         map.put("idProposta", this.id.toString());
         map.put("nome", this.nome);
-        map.put("documento", this.documento);
+        map.put("documento", this.getDocumento());
         return map;
     }
 
