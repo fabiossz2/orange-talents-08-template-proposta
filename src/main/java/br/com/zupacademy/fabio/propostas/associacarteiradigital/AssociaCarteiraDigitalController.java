@@ -6,6 +6,7 @@ import br.com.zupacademy.fabio.propostas.externo.ApiCartaoCredito;
 import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.Objects;
 
 @RestController
 class AssociaCarteiraDigitalController {
@@ -53,8 +55,17 @@ class AssociaCarteiraDigitalController {
             final URI uri = builder.path("/cartoes/{id}/carteiras/{id}").buildAndExpand(cartao.getId(), carteiraDigital.getId()).toUri();
             return ResponseEntity.created(uri).build();
         } catch (FeignException ex) {
-            logger.warn(ex.toString());
-            return ResponseEntity.unprocessableEntity().body("Não foi possível associar a carteira digital");
+            HttpStatus httpStatus = HttpStatus.resolve(ex.status());
+
+            if (Objects.isNull(httpStatus)) {
+                logger.error("Serviço da API de Cartões indisponivél");
+                return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("Serviço da API de Cartões indisponivél");
+            }
+
+            if (Objects.nonNull(httpStatus) && HttpStatus.UNPROCESSABLE_ENTITY.value() == httpStatus.value()) {
+                return ResponseEntity.unprocessableEntity().body("Não foi possível associar a carteira digital");
+            }
+            return ResponseEntity.status(httpStatus).body(ex.getMessage());
         }
     }
 }

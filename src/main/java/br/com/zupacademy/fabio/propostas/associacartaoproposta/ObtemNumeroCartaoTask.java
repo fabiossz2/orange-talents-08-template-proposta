@@ -57,7 +57,7 @@ public class ObtemNumeroCartaoTask {
                     this.cartaoRepository.save(cartao);
                 }
             } catch (FeignException | JsonProcessingException ex) {
-                logger.warn(ex.toString());
+                logger.error(ex.getMessage());
             }
         }
     }

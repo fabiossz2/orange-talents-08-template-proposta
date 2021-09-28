@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.transaction.Transactional;
@@ -63,16 +64,22 @@ public class NovaPropostaController {
         try {
             apiAnaliseFinanceira.analiseDadosFinanceiros(mapaDadosSolicitante);
             proposta.setStatus(PropostaStatus.ELEGIVEL);
-            logger.info(String.format("Proposta - solicitante: %s endereco-solicitante: %s salario: %.2f criada com sucesso",
+            logger.info(String.format("Proposta - solicitante: %s endereco-solicitante: %s salario: %.2f - ELEGIVEL",
                     proposta.getId(), proposta.getEndereco(), proposta.getSalario()));
         } catch (FeignException ex) {
-            logger.warn(ex.toString());
             HttpStatus httpStatus = HttpStatus.resolve(ex.status());
 
-            if (Objects.isNull(httpStatus)) httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+            if (Objects.isNull(httpStatus)) {
+                logger.error("Serviço da API de análise financeira indisponivél");
+                throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
+                        "Serviço da API de análise financeira indisponivél");
+            }
 
-            if (HttpStatus.UNPROCESSABLE_ENTITY.value() == httpStatus.value())
+            if (Objects.nonNull(httpStatus) && HttpStatus.UNPROCESSABLE_ENTITY.value() == httpStatus.value()) {
                 proposta.setStatus(PropostaStatus.NAO_ELEGIVEL);
+                logger.info(String.format("Proposta - solicitante: %s endereco-solicitante: %s salario: %.2f - NAO ELEGIVEL",
+                        proposta.getId(), proposta.getEndereco(), proposta.getSalario()));
+            }
         }
         this.propostasMetrics.counterPropostasCriadas();
         URI uri = builder.path("/propostas/{id}").buildAndExpand(proposta.getId()).toUri();

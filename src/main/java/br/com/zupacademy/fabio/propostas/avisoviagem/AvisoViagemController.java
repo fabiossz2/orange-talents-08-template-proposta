@@ -14,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
+import java.util.Objects;
 
 @RestController
 class AvisoViagemController {
@@ -49,8 +50,16 @@ class AvisoViagemController {
             this.avisoViagemRepository.save(avisoViagem);
             return ResponseEntity.ok().build();
         } catch (FeignException ex) {
-            logger.warn(ex.toString());
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Não foi possível adicionar aviso de viagem ao cartão");
+            HttpStatus httpStatus = HttpStatus.resolve(ex.status());
+
+            if (Objects.isNull(httpStatus)) {
+                logger.error("Serviço da API de Cartões indisponivél");
+                return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("Serviço da API de Cartões indisponivél");
+            }
+            if (Objects.nonNull(httpStatus) && HttpStatus.UNPROCESSABLE_ENTITY.value() == httpStatus.value()) {
+                return ResponseEntity.unprocessableEntity().body("Não foi possível adicionar aviso de viagem ao cartão");
+            }
+            return ResponseEntity.status(httpStatus).body(ex.getMessage());
         }
     }
 }
